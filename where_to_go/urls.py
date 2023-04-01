@@ -23,5 +23,5 @@ from .views import show_index, show_json
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', show_index),
-    path('places/<int:place_id>/', show_json)
+    path('places/<int:place_id>/', show_json, name='show_json')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

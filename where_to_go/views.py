@@ -3,11 +3,13 @@ import http
 from django.shortcuts import render, get_object_or_404
 from places.models import Place, Image
 from django.http import HttpResponse, JsonResponse
+from django.urls import reverse
 
 
 def show_index(request):
     all_places = Place.objects.all()
     place_position = []
+    # return reverse('show_json')
     for place in all_places:
         place_position.append(
             {
@@ -19,7 +21,7 @@ def show_index(request):
                 "properties": {
                     "title": place.title,
                     "placeId": place.pk,
-                    "detailsUrl": "static/places/moscow_legends.json"
+                    "detailsUrl": reverse('show_json', args=(f'{place.pk}'))
                 }
             }
         )
