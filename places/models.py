@@ -20,6 +20,7 @@ class Image(models.Model):
                                     blank=True,
                                     verbose_name='Название места',
                                     related_name='place_titles')
+    position = models.IntegerField('Позиция')
 
     def __str__(self):
-        return f'{self.pk} {self.place_title}'
+        return f'{self.position} {self.place_title}'
