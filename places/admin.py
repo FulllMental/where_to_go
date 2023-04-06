@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html, mark_safe
+from adminsortable2.admin import SortableInlineAdminMixin, SortableAdminMixin
 
 from .models import Place, Image
 
@@ -9,10 +10,12 @@ class ImageAdmin(admin.ModelAdmin):
     pass
 
 
-class ImageInline(admin.TabularInline):
+class ImageInline(SortableInlineAdminMixin, admin.StackedInline):
+    extra = 1
+    ordering = ['position']
     model = Image
     readonly_fields = ['place_image']
-    fields = ['image', 'place_image', 'position']
+    fields = ['image', 'place_image']
 
     def place_image(self, Image):
         return format_html('<img src={} width={} height={}>',
@@ -20,6 +23,9 @@ class ImageInline(admin.TabularInline):
                            Image.image.width // 3,
                            Image.image.height // 3)
 
+    place_image.short_description = 'Превью'
+
+
 @admin.register(Place)
-class PlaceAdmin(admin.ModelAdmin):
-    inlines = [ImageInline]
+class PlaceAdmin(SortableAdminMixin, admin.ModelAdmin):
+    inlines = [ImageInline,]
