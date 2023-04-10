@@ -5,11 +5,6 @@ from adminsortable2.admin import SortableInlineAdminMixin, SortableAdminMixin
 from .models import Place, Image
 
 
-@admin.register(Image)
-class ImageAdmin(admin.ModelAdmin):
-    pass
-
-
 class ImageInline(SortableInlineAdminMixin, admin.StackedInline):
     extra = 1
     ordering = ['position']
@@ -29,3 +24,4 @@ class ImageInline(SortableInlineAdminMixin, admin.StackedInline):
 @admin.register(Place)
 class PlaceAdmin(SortableAdminMixin, admin.ModelAdmin):
     inlines = [ImageInline,]
+    search_fields = ['title']
