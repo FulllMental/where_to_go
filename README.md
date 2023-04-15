@@ -4,7 +4,9 @@
 
 <img src="https://imageup.ru/img259/4285519/where_to_go.jpg" width="600" >
 
-## Запуск
+### Опубликованную версию сайта можно посмотреть по адресу [https://wheretogo.pythonanywhere.com](https://wheretogo.pythonanywhere.com)
+
+## Запуск локально
 
 Для запуска сайта вам понадобится Python третьей версии.
 
