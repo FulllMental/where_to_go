@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html, mark_safe
-from adminsortable2.admin import SortableInlineAdminMixin, SortableAdminMixin
+from adminsortable2.admin import SortableInlineAdminMixin, SortableAdminMixin, SortableAdminBase, SortableInlineAdminMixin
 
 from .models import Place, Image
 
@@ -22,6 +22,6 @@ class ImageInline(SortableInlineAdminMixin, admin.StackedInline):
 
 
 @admin.register(Place)
-class PlaceAdmin(SortableAdminMixin, admin.ModelAdmin):
+class PlaceAdmin(SortableAdminBase, admin.ModelAdmin):
     inlines = [ImageInline,]
     search_fields = ['title']

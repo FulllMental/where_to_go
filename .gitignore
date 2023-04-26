@@ -12,6 +12,8 @@ __pycache__/
 .Python
 .DS_Store
 .gitattributes
+.gitbook/
+.editorconfig
 build/
 develop-eggs/
 dist/

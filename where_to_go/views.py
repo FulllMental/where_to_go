@@ -1,15 +1,13 @@
 from django.shortcuts import render, get_object_or_404
 from places.models import Place, Image
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.urls import reverse
-import logging
 
 
 def show_index(request):
     all_places = Place.objects.all()
     place_position = []
     for place in all_places:
-        logging.warning(f'pk is now {place.title} place.id {place.id} place.pk {place.pk}')
         place_position.append(
             {
                 "type": "Feature",
@@ -37,7 +35,7 @@ def show_index(request):
 
 def show_json(request, place_id):
     place = get_object_or_404(Place, pk=place_id)
-    place_images = Image.objects.filter(place_title=place)
+    place_images = Image.objects.filter(place=place)
     images_urls = [image.image.url for image in place_images]
     response = JsonResponse(
         {

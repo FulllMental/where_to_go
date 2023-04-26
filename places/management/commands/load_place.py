@@ -1,4 +1,5 @@
 import logging
+import os
 
 import requests
 from django.core.files.base import ContentFile
@@ -18,7 +19,7 @@ def upload_images(img_urls, new_place):
         response.raise_for_status()
         image_content = ContentFile(response.content, name=image_name)
         Image.objects.create(image=image_content,
-                             place_title=new_place,
+                             place=new_place,
                              position=index)
     logging.warning('All images has been uploaded')
 
