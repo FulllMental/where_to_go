@@ -79,8 +79,16 @@ python manage.py load_place http://адрес/файла.json
 ```commandline
 (where_to_go) PS E:\where_to_go> python manage.py load_place http://адрес/файла.json
 WARNING:root:Response code: 200
-WARNING:root:New Place: Новое интересное место has been created
+WARNING:root:New Place: "Новое интересное место" has been created
 WARNING:root:All images has been uploaded
+```
+
+Так же можно отменить загрузку изображений для выбранного места:
+```commandline
+(where_to_go) PS E:\where_to_go> python manage.py load_place http://адрес/файла.json --skip_img
+WARNING:root:Response code: 200
+WARNING:root:New Place: "Новое интересное место" has been created
+WARNING:root:Pictures uploading has been skipped...
 ```
 
 ## Цели проекта

@@ -6,27 +6,27 @@ from django.urls import reverse
 
 def show_index(request):
     all_places = Place.objects.all()
-    place_position = []
+    place_positions = []
     for place in all_places:
-        place_position.append(
+        place_positions.append(
             {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [place.longitude, place.latitude]
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': [place.longitude, place.latitude]
                 },
-                "properties": {
-                    "title": place.title,
-                    "placeId": place.id,
-                    "detailsUrl": reverse('show_json', args=(place.pk,))
+                'properties': {
+                    'title': place.title,
+                    'placeId': place.id,
+                    'detailsUrl': reverse('show_json', args=(place.pk,))
                 }
             }
         )
 
     context = {
         'places_geojson': {
-            "type": "FeatureCollection",
-            "features": place_position
+            'type': 'FeatureCollection',
+            'features': place_positions
         }
     }
 
@@ -35,17 +35,16 @@ def show_index(request):
 
 def show_json(request, place_id):
     place = get_object_or_404(Place, pk=place_id)
-    place_images = Image.objects.filter(place=place)
-    images_urls = [image.image.url for image in place_images]
+    place_images = place.images.all()
     response = JsonResponse(
         {
-            "title": place.title,
-            "imgs": images_urls,
-            "description_short": place.description_short,
-            "description_long": place.description_long,
-            "coordinates": {
-                "lat": place.latitude,
-                "lon": place.longitude
+            'title': place.title,
+            'imgs': [image.image.url for image in place_images],
+            'description_short': place.description_short,
+            'description_long': place.description_long,
+            'coordinates': {
+                'lat': place.latitude,
+                'lon': place.longitude
             }
         },
         json_dumps_params={

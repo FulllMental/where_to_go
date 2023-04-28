@@ -13,10 +13,9 @@ class ImageInline(SortableInlineAdminMixin, admin.StackedInline):
     fields = ['image', 'place_image']
 
     def place_image(self, Image):
-        return format_html('<img src={} width={} height={}>',
+        return format_html('<img src={} style="max-height: {height}px">',
                            mark_safe(Image.image.url),
-                           Image.image.width // 3,
-                           Image.image.height // 3)
+                           height=200)
 
     place_image.short_description = 'Превью'
 

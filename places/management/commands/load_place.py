@@ -9,7 +9,7 @@ from environs import Env
 from places.models import Place, Image
 
 
-def upload_images(img_urls, new_place):
+def upload_images(img_urls, place):
     if not img_urls:
         logging.error('It seems, there is no images')
         return
@@ -18,9 +18,9 @@ def upload_images(img_urls, new_place):
         response = requests.get(img_url)
         response.raise_for_status()
         image_content = ContentFile(response.content, name=image_name)
-        Image.objects.create(image=image_content,
-                             place=new_place,
-                             position=index)
+        Image.objects.get_or_create(image=image_content,
+                                    place=place,
+                                    position=index)
     logging.warning('All images has been uploaded')
 
 
@@ -28,14 +28,22 @@ def get_json(url):
     response = requests.get(url)
     response.raise_for_status()
     logging.warning(f'Response code: {response.status_code}')
-    response_json = response.json()
-    new_place, _ = Place.objects.get_or_create(title=response_json['title'],
-                                                description_short=response_json['description_short'],
-                                                description_long=response_json['description_long'],
-                                                latitude=response_json['coordinates']['lat'],
-                                                longitude=response_json['coordinates']['lng'])
-    logging.warning(f'New Place: {response_json["title"]} has been created')
-    return new_place, response_json
+    return response.json()
+
+
+def create_place(response_json):
+    defaults = {
+        'description_short': response_json['description_short'],
+        'description_long': response_json['description_long'],
+        'latitude': response_json['coordinates']['lat'],
+        'longitude': response_json['coordinates']['lng'],
+    }
+    place, _ = Place.objects.get_or_create(title=response_json['title'],
+                                           latitude=response_json['coordinates']['lat'],
+                                           longitude=response_json['coordinates']['lng'],
+                                           defaults=defaults)
+    logging.warning(f'New place "{response_json["title"]}" has been created')
+    return place
 
 
 class Command(BaseCommand):
@@ -43,9 +51,13 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('url', metavar='B', type=str, help='*.json url')
+        parser.add_argument('--skip_img', action='store_true', help='skips image upload')
 
     def handle(self, *args, **options):
         url = options['url']
-        new_place, response_json = get_json(url)
-        upload_images(response_json['imgs'], new_place)
-
+        response_json = get_json(url)
+        place = create_place(response_json)
+        if options['skip_img']:
+            logging.warning('Pictures uploading has been skipped...')
+            return
+        upload_images(response_json['imgs'], place)

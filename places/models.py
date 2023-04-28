@@ -23,8 +23,8 @@ class Image(models.Model):
                               related_name='images')
     position = models.IntegerField('Позиция', db_index=True)
 
-    def __str__(self):
-        return f'{self.position} {self.place}'
-
     class Meta:
         ordering = ('position',)
+
+    def __str__(self):
+        return f'{self.position} {self.place}'
