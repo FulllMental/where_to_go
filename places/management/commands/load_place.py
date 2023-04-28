@@ -18,9 +18,9 @@ def upload_images(img_urls, place):
         response = requests.get(img_url)
         response.raise_for_status()
         image_content = ContentFile(response.content, name=image_name)
-        Image.objects.get_or_create(image=image_content,
-                                    place=place,
-                                    position=index)
+        Image.objects.create(image=image_content,
+                             place=place,
+                             position=index)
     logging.warning('All images has been uploaded')
 
 
@@ -33,10 +33,8 @@ def get_json(url):
 
 def create_place(response_json):
     defaults = {
-        'description_short': response_json['description_short'],
-        'description_long': response_json['description_long'],
-        'latitude': response_json['coordinates']['lat'],
-        'longitude': response_json['coordinates']['lng'],
+        'description_short': response_json.get('description_short', 'Здесь должно было быть короткое описание'),
+        'description_long': response_json.get('description_long', 'Здесь должно было быть длинное описание'),
     }
     place, _ = Place.objects.get_or_create(title=response_json['title'],
                                            latitude=response_json['coordinates']['lat'],
