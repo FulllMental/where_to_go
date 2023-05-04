@@ -22,24 +22,17 @@ def upload_images(img_urls, place):
     logging.warning('All images has been uploaded')
 
 
-def get_json(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    logging.warning(f'Response code: {response.status_code}')
-    return response.json()
-
-
-def create_place(response_json):
+def get_or_create_place(place_description):
     defaults = {
-        'description_short': response_json.get('description_short', 'Здесь должно было быть короткое описание'),
-        'description_long': response_json.get('description_long', 'Здесь должно было быть длинное описание'),
+        'description_short': place_description.get('description_short', ''),
+        'description_long': place_description.get('description_long', ''),
     }
-    place, _ = Place.objects.get_or_create(title=response_json['title'],
-                                           latitude=response_json['coordinates']['lat'],
-                                           longitude=response_json['coordinates']['lng'],
-                                           defaults=defaults)
-    logging.warning(f'New place "{response_json["title"]}" has been created')
-    return place
+    place, created = Place.objects.get_or_create(title=place_description['title'],
+                                                 latitude=place_description['coordinates']['lat'],
+                                                 longitude=place_description['coordinates']['lng'],
+                                                 defaults=defaults)
+    logging.warning(f'New place "{place_description["title"]}" has been created')
+    return place, created
 
 
 class Command(BaseCommand):
@@ -51,9 +44,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         url = options['url']
-        response_json = get_json(url)
-        place = create_place(response_json)
+        response = requests.get(url)
+        response.raise_for_status()
+
+        logging.warning(f'Response code: {response.status_code}')
+
+        place_description = response.json()
+        place, created = get_or_create_place(place_description)
         if options['skip_img']:
             logging.warning('Pictures uploading has been skipped...')
             return
-        upload_images(response_json['imgs'], place)
+        if created:
+            upload_images(place_description['imgs'], place)
