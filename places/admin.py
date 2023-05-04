@@ -12,9 +12,9 @@ class ImageInline(SortableInlineAdminMixin, admin.StackedInline):
     readonly_fields = ['place_image']
     fields = ['image', 'place_image']
 
-    def place_image(self, Image):
+    def place_image(self, image):
         return format_html('<img src={} style="max-height: {height}px">',
-                           mark_safe(Image.image.url),
+                           image.image.url,
                            height=200)
 
     place_image.short_description = 'Превью'
